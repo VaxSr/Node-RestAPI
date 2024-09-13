@@ -12,8 +12,8 @@ app.get("/", (req, res) => {
   res.json({ page: "Home" });
 });
 
-app.use("", (req, res) => {
-  res.json({ page: 404 });
+app.use((req, res) => {
+  res.status(404).json({ page: 404 });
 });
 
 app.listen(3000, () => {
