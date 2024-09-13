@@ -1,4 +1,4 @@
-import books from "../db.js";
+import books from "../model/supabase.js";
 
 export function getBookById(req, res) {
   const bookId = +req.params.bookId;
