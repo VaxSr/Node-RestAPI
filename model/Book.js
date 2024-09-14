@@ -33,7 +33,7 @@ export default class Book {
   }
 
   sanitize() {
-    this.isbn = this.isbn.replace(/-/g, "");
+    this.isbn = this.isbn?.replace(/-/g, "");
     this.publication_date = new Date(this.publication_date);
   }
 }
