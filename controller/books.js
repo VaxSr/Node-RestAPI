@@ -1,9 +1,7 @@
 import supabase from "../model/supabase.js";
 
-export async function getBookById(req, res) {
-  const bookId = +req.params.bookId;
-  const { data, error } = await supabase.from("book").select().eq("id", bookId);
-
+export async function getBooks(_, res) {
+  const { data, error } = await supabase.from("book").select("*");
   if (error) {
     console.error("Error fetching data:", error);
   } else {
@@ -12,8 +10,10 @@ export async function getBookById(req, res) {
   res.json(data);
 }
 
-export async function getBooks(req, res, next) {
-  const { data, error } = await supabase.from("libro").select("*");
+export async function getBookById(req, res) {
+  const bookId = +req.params.bookId;
+  const { data, error } = await supabase.from("book").select().eq("id", bookId);
+
   if (error) {
     console.error("Error fetching data:", error);
   } else {
