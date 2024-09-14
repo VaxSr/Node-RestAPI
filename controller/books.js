@@ -67,12 +67,12 @@ export async function postBook(req, res) {
 }
 
 export async function deleteBook(req, res) {
-  const bookId = +req.params.bookId;
+  const bookIsbn = +req.params.bookIsbn;
 
   const { data, error } = await supabase
     .from("book")
     .delete()
-    .eq("id", bookId)
+    .eq("isbn", bookIsbn)
     .select();
 
   if (error) {

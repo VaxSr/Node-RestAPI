@@ -8,7 +8,7 @@ import {
 
 const router = Router();
 
-router.delete("/books/:bookId", deleteBook);
+router.delete("/books/:bookIsbn", deleteBook);
 
 router.get("/books/:bookIsbn", getBookByIsbn);
 
