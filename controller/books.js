@@ -1,4 +1,4 @@
-import supabase from "../model/supabase.js";
+import supabase from "../config/supabase.js";
 
 export async function getBooks(_, res) {
   const { data, error } = await supabase.from("book").select("*");
