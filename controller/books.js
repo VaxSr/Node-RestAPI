@@ -23,6 +23,8 @@ export async function getBookByIsbn(req, res) {
   } else {
     console.log("Data:", data);
   }
+
+  res.status(200);
   res.json(data.length === 1 ? data[0] : data);
 }
 
