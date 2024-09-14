@@ -24,8 +24,7 @@ export async function getBookByIsbn(req, res) {
     console.log("Data:", data);
   }
 
-  res.status(200);
-  res.json(data.length === 1 ? data[0] : data);
+  res.status(200).json(data.length === 1 ? data[0] : data);
 }
 
 export async function postBook(req, res) {
@@ -36,11 +35,8 @@ export async function postBook(req, res) {
     req.body.pages
   );
 
-  book.sanitize();
-
   if (!book.isValid()) {
-    res.status(400);
-    res.json(book);
+    res.status(400).json(book);
     return;
   }
 
@@ -61,8 +57,7 @@ export async function postBook(req, res) {
     res.send(error);
   } else {
     console.log("Data:", data);
-    res.status(201);
-    res.json(data.length === 1 ? data[0] : data);
+    res.status(201).json(data.length === 1 ? data[0] : data);
   }
 }
 
