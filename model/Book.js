@@ -6,6 +6,8 @@ export default class Book {
     this.title = title;
     this.publication_date = publication_date || null;
     this.pages = +pages;
+
+    this.sanitize();
   }
 
   isValid() {
