@@ -1,17 +1,28 @@
 import supabase from "../config/supabase.js";
 import Book from "../model/Book.js";
+import Response from "../utils/Response.js";
 
 export async function getBooks(_, res) {
+  const response = new Response(res);
+
   const { data, error } = await supabase.from("book").select("*");
   if (error) {
     console.error("Error fetching data:", error);
+    response.status(500);
+    response.error({
+      message: "Error fetching data:",
+      data: error,
+    });
   } else {
     console.log("Data:", data);
+    response.status(200);
+    response.success(data);
   }
-  res.json(data);
 }
 
 export async function getBookByIsbn(req, res) {
+  const response = new Response(res);
+
   const bookIsbn = req.params.bookIsbn;
   const { data, error } = await supabase
     .from("book")
@@ -20,15 +31,22 @@ export async function getBookByIsbn(req, res) {
 
   if (error) {
     console.error("Error fetching data:", error);
+
+    response.status(500);
+    response.error({
+      message: "Error fetching data:",
+      data: error,
+    });
   } else {
     console.log("Data:", data);
+    response.status(200);
+    response.success(data);
   }
-
-  res.status(200);
-  res.json(data.length === 1 ? data[0] : data);
 }
 
 export async function postBook(req, res) {
+  const response = new Response(res);
+
   const book = new Book(
     req.body.isbn,
     req.body.title,
@@ -39,30 +57,27 @@ export async function postBook(req, res) {
   book.sanitize();
 
   if (!book.isValid()) {
-    res.status(400);
-    res.json(book);
-    return;
-  }
-
-  const { data, error } = await supabase.from("book").insert(book).select();
-
-  if (error) {
-    console.error("Error fetching data:", error);
-
-    /* TODO: improve error handling
-    res.status(409);
-    res.setHeader("content-type", "application/problem+json");
-    res.send({
-      message: "Resource already exists.",
-      detail: "",
+    response.status(400);
+    response.error({
+      message: "Invalid data provided",
+      data: book,
     });
-    */
-
-    res.send(error);
   } else {
-    console.log("Data:", data);
-    res.status(201);
-    res.json(data.length === 1 ? data[0] : data);
+    const { data, error } = await supabase.from("book").insert(book).select();
+
+    if (error) {
+      console.error("Error fetching data:", error);
+
+      response.status(409);
+      response.error({
+        message: "Resource already exists.",
+        details: "",
+      });
+    } else {
+      console.log("Data:", data);
+      response.status(201);
+      response.success(data.length === 1 ? data[0] : data);
+    }
   }
 }
 
