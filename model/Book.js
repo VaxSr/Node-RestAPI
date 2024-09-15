@@ -49,6 +49,28 @@ export default class Book {
     }
   }
 
+  static async updateByIsbn(bookIsbn, newBookData) {
+    if (newBookData.isbn) {
+      delete newBookData.isbn;
+    }
+
+    const { data, error } = await supabase
+      .from("book")
+      .update(newBookData)
+      .eq("isbn", bookIsbn)
+      .select();
+
+    if (error) {
+      console.error("Error fetching data:", error);
+      return error;
+    } else {
+      console.log("Data:", data);
+      return data;
+    }
+  }
+
+  // TODO: replaceBookByIsbn
+
   static async fetchByISbn(bookIsbn) {
     const { data, error } = await supabase
       .from("book")

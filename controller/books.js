@@ -1,3 +1,4 @@
+import supabase from "../config/supabase.js";
 import Book from "../model/Book.js";
 
 export default class BookController {
@@ -34,4 +35,16 @@ export default class BookController {
     const deletedBook = await Book.deleteByIsbn(bookIsbn);
     res.json(deletedBook);
   }
+
+  static async updateBook(req, res) {
+    const bookIsbn = +req.params.bookIsbn;
+    const newBookData = req.body;
+    // TODO: check if the properties you want to change exist in the db
+
+    const updatedBook = await Book.updateByIsbn(bookIsbn, newBookData);
+
+    res.status(200).json(updatedBook);
+  }
+
+  // TODO: replaceBook
 }
