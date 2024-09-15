@@ -1,4 +1,3 @@
-import supabase from "../config/supabase.js";
 import Book from "../model/Book.js";
 
 export default class BookController {
@@ -9,7 +8,7 @@ export default class BookController {
 
   static async getBookByIsbn(req, res) {
     const bookIsbn = req.params.bookIsbn;
-    const bookData = await Book.fetchByISbn(bookIsbn);
+    const bookData = await Book.fetchByIsbn(bookIsbn);
     res.status(200).json(bookData.length === 1 ? bookData[0] : bookData);
   }
 
@@ -25,8 +24,8 @@ export default class BookController {
       res.status(400).json(book);
       return;
     }
-    const bookData = await book.save();
 
+    const bookData = await book.save();
     res.status(201).json(bookData.length === 1 ? bookData[0] : bookData);
   }
 
@@ -39,12 +38,26 @@ export default class BookController {
   static async updateBook(req, res) {
     const bookIsbn = +req.params.bookIsbn;
     const newBookData = req.body;
-    // TODO: check if the properties you want to change exist in the db
+
+    const areValidProperties = Book.checkAllProperties(newBookData);
+    if (!areValidProperties.isValid) {
+      return res.json({ error: areValidProperties.body });
+    }
 
     const updatedBook = await Book.updateByIsbn(bookIsbn, newBookData);
-
     res.status(200).json(updatedBook);
   }
 
-  // TODO: replaceBook
+  static async replaceBook(req, res) {
+    const bookIsbn = +req.params.bookIsbn;
+    const newBookData = req.body;
+
+    const areValidProperties = Book.checkAllProperties(newBookData);
+    if (!areValidProperties.isValid) {
+      return res.json({ error: areValidProperties.body });
+    }
+
+    const updatedBook = await Book.replaceBookByIsbn(bookIsbn, newBookData);
+    res.status(200).json(updatedBook);
+  }
 }

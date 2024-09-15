@@ -15,6 +15,6 @@ router.post("/books", BookController.postBook);
 router.patch("/books/:bookIsbn", BookController.updateBook);
 
 // replace book with another providing a isbn
-router.put("/books/:bookIsbn");
+router.put("/books/:bookIsbn", BookController.replaceBook);
 
 export default router;

@@ -69,9 +69,23 @@ export default class Book {
     }
   }
 
-  // TODO: replaceBookByIsbn
+  static async replaceBookByIsbn(bookIsbn, newBookData) {
+    const { data, error } = await supabase
+      .from("book")
+      .update(newBookData)
+      .eq("isbn", bookIsbn)
+      .select();
 
-  static async fetchByISbn(bookIsbn) {
+    if (error) {
+      console.error("Error fetching data:", error);
+      return error;
+    } else {
+      console.log("Data:", data);
+      return data;
+    }
+  }
+
+  static async fetchByIsbn(bookIsbn) {
     const { data, error } = await supabase
       .from("book")
       .select("*")
@@ -124,5 +138,26 @@ export default class Book {
   sanitize() {
     this.isbn = this.isbn?.replace(/-/g, "");
     this.publication_date = new Date(this.publication_date);
+  }
+
+  static checkAllProperties(newBookData) {
+    const dbProperties = ["isbn", "title", "publication_date", "pages"];
+    const keys = Object.keys(newBookData);
+    const keysLength = keys.length;
+
+    if (keysLength > dbProperties.length || keysLength < dbProperties.length) {
+      // TODO: return status code and message
+      return { isValid: false, body: "Too many or too few properties" };
+    }
+
+    const includesAllProperties = keys.every((key) =>
+      dbProperties.includes(key)
+    );
+
+    if (!includesAllProperties) {
+      // TODO: return status code and message
+      return { isValid: false, body: "Wrong properties" };
+    }
+    return { isValid: true };
   }
 }
