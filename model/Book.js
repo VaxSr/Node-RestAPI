@@ -1,3 +1,4 @@
+import supabase from "../config/supabase.js";
 import checkIsbn from "../utils/checkIsbn.js";
 
 export default class Book {
@@ -8,6 +9,70 @@ export default class Book {
     this.pages = +pages;
 
     this.sanitize();
+  }
+
+  async save() {
+    const { data, error } = await supabase.from("book").insert(this).select();
+
+    if (error) {
+      console.error("Error fetching data:", error);
+
+      /* TODO: improve error handling
+    res.status(409);
+    res.setHeader("content-type", "application/problem+json");
+    res.send({
+      message: "Resource already exists.",
+      detail: "",
+    });
+    */
+
+      return error;
+    } else {
+      console.log("Data:", data);
+      return data;
+    }
+  }
+
+  static async deleteByIsbn(bookIsbn) {
+    const { data, error } = await supabase
+      .from("book")
+      .delete()
+      .eq("isbn", bookIsbn)
+      .select();
+
+    if (error) {
+      console.error("Error fetching data:", error);
+      return error;
+    } else {
+      console.log("Data:", data);
+      return data;
+    }
+  }
+
+  static async fetchByISbn(bookIsbn) {
+    const { data, error } = await supabase
+      .from("book")
+      .select("*")
+      .eq("isbn", bookIsbn);
+
+    if (error) {
+      console.error("Error fetching data:", error);
+      return error;
+    } else {
+      console.log("Data:", data);
+      return data;
+    }
+  }
+
+  static async fetchAll() {
+    const { data, error } = await supabase.from("book").select("*");
+    if (error) {
+      console.error("Error fetching data:", error);
+      return error;
+    } else {
+      console.log("Data:", data);
+      return data;
+    }
   }
 
   isValid() {
