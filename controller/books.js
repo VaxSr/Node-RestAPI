@@ -1,84 +1,63 @@
-import supabase from "../config/supabase.js";
 import Book from "../model/Book.js";
 
-export async function getBooks(_, res) {
-  const { data, error } = await supabase.from("book").select("*");
-  if (error) {
-    console.error("Error fetching data:", error);
-  } else {
-    console.log("Data:", data);
-  }
-  res.json(data);
-}
-
-export async function getBookByIsbn(req, res) {
-  const bookIsbn = req.params.bookIsbn;
-  const { data, error } = await supabase
-    .from("book")
-    .select("*")
-    .eq("isbn", bookIsbn);
-
-  if (error) {
-    console.error("Error fetching data:", error);
-  } else {
-    console.log("Data:", data);
+export default class BookController {
+  async getBooks(_, res) {
+    const booksData = await Book.fetchAll();
+    res.json(booksData);
   }
 
-  res.status(200);
-  res.json(data.length === 1 ? data[0] : data);
-}
-
-export async function postBook(req, res) {
-  const book = new Book(
-    req.body.isbn,
-    req.body.title,
-    req.body.publication_date,
-    req.body.pages
-  );
-
-  book.sanitize();
-
-  if (!book.isValid()) {
-    res.status(400);
-    res.json(book);
-    return;
+  async getBookByIsbn(req, res) {
+    const bookIsbn = req.params.bookIsbn;
+    const bookData = await Book.fetchByIsbn(bookIsbn);
+    res.status(200).json(bookData.length === 1 ? bookData[0] : bookData);
   }
 
-  const { data, error } = await supabase.from("book").insert(book).select();
+  async postBook(req, res) {
+    const book = new Book(
+      req.body.isbn,
+      req.body.title,
+      req.body.publication_date,
+      req.body.pages
+    );
 
-  if (error) {
-    console.error("Error fetching data:", error);
+    if (!book.isValid()) {
+      res.status(400).json(book);
+      return;
+    }
 
-    /* TODO: improve error handling
-    res.status(409);
-    res.setHeader("content-type", "application/problem+json");
-    res.send({
-      message: "Resource already exists.",
-      detail: "",
-    });
-    */
-
-    res.send(error);
-  } else {
-    console.log("Data:", data);
-    res.status(201);
-    res.json(data.length === 1 ? data[0] : data);
+    const bookData = await book.save();
+    res.status(201).json(bookData.length === 1 ? bookData[0] : bookData);
   }
-}
 
-export async function deleteBook(req, res) {
-  const bookId = +req.params.bookId;
-
-  const { data, error } = await supabase
-    .from("book")
-    .delete()
-    .eq("id", bookId)
-    .select();
-
-  if (error) {
-    console.error("Error fetching data:", error);
-  } else {
-    console.log("Data:", data);
+  async deleteBook(req, res) {
+    const bookIsbn = +req.params.bookIsbn;
+    const deletedBook = await Book.deleteByIsbn(bookIsbn);
+    res.json(deletedBook);
   }
-  res.json(data);
+
+  async patchBook(req, res) {
+    const bookIsbn = +req.params.bookIsbn;
+    const newBookData = req.body;
+
+    const areValidProperties = Book.checkAllProperties(newBookData);
+    if (!areValidProperties.isValid) {
+      return res.json({ error: areValidProperties.body });
+    }
+
+    const updatedBook = await Book.updateByIsbn(bookIsbn, newBookData);
+    res.status(200).json(updatedBook);
+  }
+
+  async putBook(req, res) {
+    const bookIsbn = +req.params.bookIsbn;
+    const newBookData = req.body;
+
+    const areValidProperties = Book.checkAllProperties(newBookData);
+    if (!areValidProperties.isValid) {
+      return res.json({ error: areValidProperties.body });
+    }
+
+    const updatedBook = await Book.replaceBookByIsbn(bookIsbn, newBookData);
+    res.status(200).json(updatedBook);
+  }
 }
