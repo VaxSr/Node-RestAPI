@@ -1,18 +1,18 @@
 import Book from "../model/Book.js";
 
 export default class BookController {
-  static async getBooks(_, res) {
+  async getBooks(_, res) {
     const booksData = await Book.fetchAll();
     res.json(booksData);
   }
 
-  static async getBookByIsbn(req, res) {
+  async getBookByIsbn(req, res) {
     const bookIsbn = req.params.bookIsbn;
     const bookData = await Book.fetchByIsbn(bookIsbn);
     res.status(200).json(bookData.length === 1 ? bookData[0] : bookData);
   }
 
-  static async postBook(req, res) {
+  async postBook(req, res) {
     const book = new Book(
       req.body.isbn,
       req.body.title,
@@ -29,13 +29,13 @@ export default class BookController {
     res.status(201).json(bookData.length === 1 ? bookData[0] : bookData);
   }
 
-  static async deleteBook(req, res) {
+  async deleteBook(req, res) {
     const bookIsbn = +req.params.bookIsbn;
     const deletedBook = await Book.deleteByIsbn(bookIsbn);
     res.json(deletedBook);
   }
 
-  static async updateBook(req, res) {
+  async patchBook(req, res) {
     const bookIsbn = +req.params.bookIsbn;
     const newBookData = req.body;
 
@@ -48,7 +48,7 @@ export default class BookController {
     res.status(200).json(updatedBook);
   }
 
-  static async replaceBook(req, res) {
+  async putBook(req, res) {
     const bookIsbn = +req.params.bookIsbn;
     const newBookData = req.body;
 
