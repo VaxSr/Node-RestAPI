@@ -39,13 +39,15 @@ export default class Book {
   }
 
   static async updateByIsbn(bookIsbn, newBookData) {
-    if (newBookData.isbn) {
-      delete newBookData.isbn;
-    }
+    // if (newBookData.isbn) {
+    //   delete newBookData.isbn;
+    // }
+
+    const { isbn, ...rest } = newBookData;
 
     const { data, error } = await supabase
       .from("book")
-      .update(newBookData)
+      .update(rest)
       .eq("isbn", bookIsbn)
       .select();
 
@@ -126,7 +128,8 @@ export default class Book {
   }
 
   static checkAllProperties(newBookData) {
-    const dbProperties = ["isbn", "title", "publication_date", "pages"];
+    // const dbProperties = ["isbn", "title", "publication_date", "pages"];
+    const dbProperties = Object.keys(new Book());
     const keys = Object.keys(newBookData);
     const keysLength = keys.length;
 
