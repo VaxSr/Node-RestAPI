@@ -16,7 +16,8 @@ export async function getAutorBySurname(req, res) {
   const { data, error } = await supabase
     .from("author")
     .select("*")
-    .eq("surname", surname);
+    .ilike("surname", surname);
+  // .eq("surname", surname);
 
   if (error) {
     console.error("Error fetching data:", error);
@@ -48,10 +49,6 @@ export async function deleteAuthor(req, res) {
     .delete()
     .eq("surname", author)
     .select();
-
-  /* IDEA: quando si cancella 
-    un autore vengono cancellati 
-    tutti i suoi libri */
 
   if (error) {
     console.error("Error fetching data:", error);
