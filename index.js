@@ -1,12 +1,14 @@
 import express from "express";
 import bodyParser from "body-parser";
 import bookRoutes from "./routes/book-routes.js";
+import authorRoutes from "./routes/author-routes.js";
 
 const app = express();
 
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(bookRoutes);
+app.use(authorRoutes);
 
 app.get("/", (req, res) => {
   res.json({ page: "Home" });
