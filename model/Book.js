@@ -17,20 +17,10 @@ export default class Book {
     if (error) {
       console.error("Error fetching data:", error);
 
-      /* TODO: improve error handling
-    res.status(409);
-    res.setHeader("content-type", "application/problem+json");
-    res.send({
-      message: "Resource already exists.",
-      detail: "",
-    });
-    */
-
-      return error;
-    } else {
-      console.log("Data:", data);
-      return data;
+      return { querySuccessful: false, error };
     }
+    console.log("Data:", data);
+    return data;
   }
 
   static async deleteByIsbn(bookIsbn) {
@@ -43,10 +33,9 @@ export default class Book {
     if (error) {
       console.error("Error fetching data:", error);
       return error;
-    } else {
-      console.log("Data:", data);
-      return data;
     }
+    console.log("Data:", data);
+    return data;
   }
 
   static async updateByIsbn(bookIsbn, newBookData) {
@@ -63,10 +52,9 @@ export default class Book {
     if (error) {
       console.error("Error fetching data:", error);
       return error;
-    } else {
-      console.log("Data:", data);
-      return data;
     }
+    console.log("Data:", data);
+    return data;
   }
 
   static async replaceBookByIsbn(bookIsbn, newBookData) {
@@ -79,10 +67,9 @@ export default class Book {
     if (error) {
       console.error("Error fetching data:", error);
       return error;
-    } else {
-      console.log("Data:", data);
-      return data;
     }
+    console.log("Data:", data);
+    return data;
   }
 
   static async fetchByIsbn(bookIsbn) {
@@ -94,10 +81,9 @@ export default class Book {
     if (error) {
       console.error("Error fetching data:", error);
       return error;
-    } else {
-      console.log("Data:", data);
-      return data;
     }
+    console.log("Data:", data);
+    return data;
   }
 
   static async fetchAll() {
@@ -105,10 +91,9 @@ export default class Book {
     if (error) {
       console.error("Error fetching data:", error);
       return error;
-    } else {
-      console.log("Data:", data);
-      return data;
     }
+    console.log("Data:", data);
+    return data;
   }
 
   isValid() {
