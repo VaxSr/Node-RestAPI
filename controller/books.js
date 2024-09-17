@@ -9,7 +9,7 @@ export default class BookController {
   }
 
   async getBookByIsbn(req, res) {
-const response = new Response(res);
+    const response = new Response(res);
     const bookIsbn = req.params.bookIsbn;
     const bookData = await Book.fetchByIsbn(bookIsbn);
     response.status(200);
@@ -17,8 +17,8 @@ const response = new Response(res);
   }
 
   async postBook(req, res) {
-const response = new Response(res);    
-const book = new Book(
+    const response = new Response(res);
+    const book = new Book(
       req.body.isbn,
       req.body.title,
       req.body.publication_date,
@@ -27,53 +27,63 @@ const book = new Book(
 
     if (!book.isValid()) {
       response.status(400);
-      reponse.error(book); // TODO: specify title
+      response.error(book); // TODO: specify title
       return;
     }
 
     const bookData = await book.save();
+
+    if (
+      bookData.hasOwnProperty("querySuccessful") &&
+      !bookData.querySuccessful
+    ) {
+      response.status(409);
+      response.error(bookData.error); // TODO: specify title
+      return;
+    }
+
     response.status(201);
-response.success(bookData.length === 1 ? bookData[0] : bookData);
+    response.success(bookData.length === 1 ? bookData[0] : bookData);
   }
 
   async deleteBook(req, res) {
-const response = new Response(res);    
-const bookIsbn = +req.params.bookIsbn;
+    const response = new Response(res);
+    const bookIsbn = +req.params.bookIsbn;
     const deletedBook = await Book.deleteByIsbn(bookIsbn);
-    response.success(deletedBook);
+    response.success(deletedBook); // WARN: Check response if resource not in db
   }
 
   async patchBook(req, res) {
-const response = new Response(res);
-    const bookIsbn = +req.params.bookIsbn;
-    const newBookData = req.body;
-
-    const areValidProperties = Book.checkAllProperties(newBookData);
-    if (!areValidProperties.isValid) {
-	response.status(400);
-	response.error(areValidProperties.body); // TODO: specify title
-	return;
-    }
-
-    const updatedBook = await Book.updateByIsbn(bookIsbn, newBookData);
-    	response.status(200);
-	response.success(updatedBook);
-  }
-
-  async putBook(req, res) {
-const response = new Response(res); 
+    const response = new Response(res);
     const bookIsbn = +req.params.bookIsbn;
     const newBookData = req.body;
 
     const areValidProperties = Book.checkAllProperties(newBookData);
     if (!areValidProperties.isValid) {
       response.status(400);
-	response.error(areValidProperties.body); // TODO: specify title
-	return;
+      response.error(areValidProperties.body); // TODO: specify title
+      return;
+    }
+
+    const updatedBook = await Book.updateByIsbn(bookIsbn, newBookData);
+    response.status(200);
+    response.success(updatedBook);
+  }
+
+  async putBook(req, res) {
+    const response = new Response(res);
+    const bookIsbn = +req.params.bookIsbn;
+    const newBookData = req.body;
+
+    const areValidProperties = Book.checkAllProperties(newBookData);
+    if (!areValidProperties.isValid) {
+      response.status(400);
+      response.error(areValidProperties.body); // TODO: specify title
+      return;
     }
 
     const updatedBook = await Book.replaceBookByIsbn(bookIsbn, newBookData);
     response.status(200);
-	response.success(updatedBook);
+    response.success(updatedBook);
   }
 }
