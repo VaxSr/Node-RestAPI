@@ -13,7 +13,7 @@ export default class BookController {
     const bookIsbn = req.params.bookIsbn;
     const bookData = await Book.fetchByIsbn(bookIsbn);
     response.status(200);
-    response.success(bookData.length === 1 ? bookData[0] : bookData);
+    response.success(bookData);
   }
 
   async postBook(req, res) {
@@ -27,7 +27,7 @@ export default class BookController {
 
     if (!book.isValid()) {
       response.status(400);
-      response.error(book); // TODO: specify title
+      response.error({ title: "Invalid Request fields", book });
       return;
     }
 
@@ -38,12 +38,15 @@ export default class BookController {
       !bookData.querySuccessful
     ) {
       response.status(409);
-      response.error(bookData.error); // TODO: specify title
+      response.error({
+        title: "Resource already present",
+        data: bookData.error,
+      });
       return;
     }
 
     response.status(201);
-    response.success(bookData.length === 1 ? bookData[0] : bookData);
+    response.success(bookData);
   }
 
   async deleteBook(req, res) {
@@ -61,7 +64,10 @@ export default class BookController {
     const areValidProperties = Book.checkAllProperties(newBookData);
     if (!areValidProperties.isValid) {
       response.status(400);
-      response.error(areValidProperties.body); // TODO: specify title
+      response.error({
+        title: "Invalid Request fields",
+        data: areValidProperties.body,
+      });
       return;
     }
 
@@ -78,7 +84,10 @@ export default class BookController {
     const areValidProperties = Book.checkAllProperties(newBookData);
     if (!areValidProperties.isValid) {
       response.status(400);
-      response.error(areValidProperties.body); // TODO: specify title
+      response.error({
+        title: "Invalid Request fields",
+        data: areValidProperties.body,
+      });
       return;
     }
 
