@@ -10,11 +10,11 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bookRoutes);
 app.use(authorRoutes);
 
-app.get("/", (req, res) => {
+app.get("/", (_, res) => {
   res.json({ page: "Home" });
 });
 
-app.use((req, res) => {
+app.use((_, res) => {
   res.status(404).json({ page: 404 });
 });
 
