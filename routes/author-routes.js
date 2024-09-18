@@ -8,12 +8,16 @@ import {
 
 const router = Router();
 
-router.delete("/authors/:surname", deleteAuthor);
-
-router.get("/authors/:surname", getAutorBySurname);
-
+// get a list of all authors
 router.get("/authors", getAuthors);
 
+// get author by surname
+router.get("/authors/:surname", getAutorBySurname);
+
+// add authors
 router.post("/authors", postAuthor);
+
+// delete author by surname
+router.delete("/authors/:surname", deleteAuthor);
 
 export default router;
